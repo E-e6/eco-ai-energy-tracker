@@ -1,0 +1,26 @@
+# Eco-AI Energy Tracker for Schools
+
+## 💡 What is this?
+A student-built Streamlit web app that helps schools monitor and reduce energy use. It predicts electricity consumption based on weather data and shows daily usage trends.
+
+## 🎯 Why was it created?
+To reduce carbon emissions in schools and promote student-led sustainability using technology. Aligns with SDG 7 (Clean Energy) and SDG 13 (Climate Action).
+
+## 🛠 Technologies Used
+- Python
+- Streamlit
+- scikit-learn (ML)
+- pandas & matplotlib
+- (Optional) Arduino for real-time sensors
+
+## 🧠 How It Works
+- Loads energy usage data (CSV)
+- Trains a simple machine learning model to predict usage
+- Displays dashboard with predictions, graphs, and energy tips
+
+## 🔮 Future Improvements
+- Add real-time sensors via Arduino
+- Solar panel integration
+- Class-vs-class energy-saving competition
+
+Created for **Young ICT Explorers 2025**
