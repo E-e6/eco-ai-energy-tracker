@@ -3,15 +3,23 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import pickle
+import os
 
-# Set page title
 st.set_page_config(page_title="Eco-AI Energy Tracker", layout="centered")
 st.title("Eco-AI Energy Tracker for Schools")
 st.markdown("Track, predict and reduce your school’s energy use.")
 
-# Load the trained model
+# Load model
 with open("model.pkl", "rb") as f:
     model = pickle.load(f)
+
+# Load original energy data
+df_path = "energy_data.csv"
+if os.path.exists(df_path):
+    df = pd.read_csv(df_path)
+else:
+    st.error("⚠️ Missing 'energy_data.csv'. Please upload it.")
+    st.stop()
 
 # --- INPUT SECTION ---
 st.header("Predict Energy Consumption")
@@ -25,35 +33,31 @@ if st.button('Predict Energy Consumption'):
     prediction = model.predict(input_features)
     st.success(f'Predicted Energy Consumption: **{prediction[0]:.2f} kWh**')
 
-# --- LOAD AND SHOW DATA ---
-df = pd.read_csv("energy_data.csv")
+# --- EDITABLE DATA TABLE ---
+st.subheader("📋 Edit Energy Data Table")
+edited_df = st.data_editor(df, num_rows="dynamic", use_container_width=True)
 
-if st.checkbox("📊 Show Energy Data Table"):
-    st.dataframe(df)
+# Save edited data to CSV (optional — you can also keep this in memory only)
+edited_df.to_csv(df_path, index=False)
 
-# --- DYNAMIC ENERGY USAGE PLOT ---
-st.subheader("📈 Energy Usage This Week")
+# --- UPDATED DYNAMIC PLOT ---
+st.subheader("📈 Updated Energy Usage This Week")
 
 fig, ax = plt.subplots()
+ax.plot(edited_df["Day"], edited_df["Usage_kWh"], marker='o', linestyle='-', color='green')
 
-# Plot energy usage line
-ax.plot(df["Day"], df["Usage_kWh"], marker='o', linestyle='-', color='green')
-
-# Axis labels
+# Axis labels and grid
 ax.set_xlabel("Day")
 ax.set_ylabel("kWh Used")
 ax.set_title("Weekly Energy Usage")
+ax.grid(True, linestyle='--', alpha=0.7)
 
-# Dynamic Y-axis limits
-y_min = df["Usage_kWh"].min()
-y_max = df["Usage_kWh"].max()
+# Dynamic Y range
+y_min = edited_df["Usage_kWh"].min()
+y_max = edited_df["Usage_kWh"].max()
 y_range = y_max - y_min
 ax.set_ylim(y_min - 0.1 * y_range, y_max + 0.1 * y_range)
 
-# Gridlines
-ax.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-
-# Show the plot
 st.pyplot(fig)
 
 # --- FOOTER ---
